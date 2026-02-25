@@ -32,7 +32,10 @@ jobs:
         uses: biomejs/setup-biome@1cbe33ead22c7a2fded3b52fa2893611c815c9b5 # v2.5.0
 
       - name: Install just
-        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+        run: |
+          url="https://github.com/casey/just/releases/download"
+          url="${url}/1.46.0/just-1.46.0-x86_64-unknown-linux-musl.tar.gz"
+          curl -fsSL "${url}" | tar xz -C /usr/local/bin just
 
       - name: Install rumdl
         run: |
