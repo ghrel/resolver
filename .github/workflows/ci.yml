@@ -1,0 +1,66 @@
+---
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41 # v7.2.1
+
+      - name: Install Biome
+        uses: biomejs/setup-biome@1cbe33ead22c7a2fded3b52fa2893611c815c9b5 # v2.5.0
+
+      - name: Install just
+        uses: extractions/setup-just@e33e0265a09d6d736e2ee1e0eb685ef1de4669ff # v3
+
+      - name: Install rumdl
+        run: |
+          url="https://github.com/rvben/rumdl/releases/download"
+          url="${url}/v0.1.26/rumdl-v0.1.26-x86_64-unknown-linux-gnu.tar.gz"
+          curl -fsSL "${url}" | tar xz
+          sudo mv rumdl /usr/local/bin/
+
+      - name: Install linting tools
+        run: |
+          uv tool install yamllint
+          uv tool install codespell
+
+      - name: Cache Vale styles
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: .vale
+          key: vale-styles-${{ hashFiles('.vale.ini') }}
+          restore-keys: |
+            vale-styles-
+
+      - name: Install and sync Vale
+        run: |
+          uv tool install vale
+          vale sync
+
+      - name: Run linters
+        run: just lint
+
+      - name: Lint GitHub Actions workflows
+        uses: reviewdog/action-actionlint@4b9ef3f43a0b9162e3c83c1a08d1cc8d4235164b # v1.70.0
