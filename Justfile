@@ -62,7 +62,7 @@ lint-markdown *args:
 
 # Lint prose in Markdown files
 lint-prose *args:
-    vale {{ if args == "" { "README.md" } else { args } }}
+    vale {{ if args == "" { "." } else { args } }}
 
 # Check spelling
 lint-spelling:

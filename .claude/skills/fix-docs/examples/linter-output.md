@@ -15,60 +15,33 @@ Run `rumdl fmt` to automatically fix 3 of the 3 issues
 
 Each line follows the pattern `file:line:column: [RULE] description [*]`. The `[*]` suffix means the finding supports auto-fix via `rumdl fmt`.
 
-## `vale` summary output (`just lint-prose-summary`)
+## `vale` output (`just lint-prose`)
 
 ```text
-## 6 findings (2 error, 4 warning)
+ docs/CONCEPT.md
+ 12:1   warning  'Key Design Decisions' should   little-matches.Headings
+                 use sentence-style
+                 capitalization.
+ 45:15  error    Did you really mean             Vale.Spelling
+                 'metareasoning'?
+ 78:5   warning  'in order to' is too wordy.     write-good.TooWordy
 
-### By file
-    3  docs/CONCEPT.md
-    3  docs/design/overview.md
-
-### By rule
-    2  write-good.TooWordy
-    2  Vale.Spelling
-    1  little-matches.Headings
-    1  ai-tells.HedgingPhrases
-
-### Spelling (2 words to add to vocabulary)
-  metareasoning
-  skeuomorphic
-
-### Findings
-
-  docs/CONCEPT.md
-    12:1 w little-matches.Headings: 'Key Design Decisions' should use sentence-style capitalization.
-    45:15 e Vale.Spelling: Did you really mean 'metareasoning'?
-    78:5 w write-good.TooWordy: 'in order to' is too wordy.
-
-  docs/design/overview.md
-    3:20 e ai-tells.HedgingPhrases: AI hedge: 'it is important to note that'. Delete this throat-clearing and state your point directly.
-    15:8 e Vale.Spelling: Did you really mean 'skeuomorphic'?
-    22:12 w write-good.TooWordy: 'due to the fact that' is too wordy.
+ docs/design/overview.md
+ 3:20   error    AI hedge: 'it is important to   ai-tells.HedgingPhrases
+                 note that'. Delete this
+                 throat-clearing and state your
+                 point directly.
+ 15:8   error    Did you really mean             Vale.Spelling
+                 'skeuomorphic'?
+ 22:12  warning  'due to the fact that' is too   write-good.TooWordy
+                 wordy.
 ```
 
-The summary is pre-categorized into sections:
+Each finding shows `line:col severity message rule`. Findings are grouped by file.
 
-- **By file** — which files need work and how many findings each
-- **By rule** — what categories of fixes are needed
-- **Spelling** — words to add to the vocabulary accept list (only present when there are spelling findings)
-- **Findings** — all findings grouped by file, one line each: `line:col severity rule: message`
-
-Severity codes: `e` = error, `w` = warning, `s` = suggestion.
+Severity levels: `error`, `warning`, `suggestion`.
 
 Use the rule name to categorize:
 
-- `Vale.Spelling` or `Google.Spelling` = vocabulary finding (listed in the Spelling section)
+- `Vale.Spelling` or `Google.Spelling` = vocabulary finding (add the word to the accept list)
 - `little-matches.Headings`, `write-good.*`, `Google.*`, `proselint.*`, `ai-tells.*` = prose style finding
-
-### Filtering
-
-The summary script supports `--file` and `--rule` flags for filtered views:
-
-```bash
-# Show only findings for a specific file
-uvx vale --output=JSON --no-exit . | python3 tools/vale_summary.py --file CONCEPT.md
-
-# Show only findings for a specific rule
-uvx vale --output=JSON --no-exit . | python3 tools/vale_summary.py --rule Spelling
-```

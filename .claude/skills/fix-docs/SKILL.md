@@ -26,10 +26,10 @@ Run both linters against the target files. Capture the full output from each com
 
 **Prose linting (`vale`)**:
 
-- With files: `just lint-prose-summary <file1> <file2> ...`
-- Without files: `just lint-prose-summary`
+- With files: `just lint-prose <file1> <file2> ...`
+- Without files: `just lint-prose`
 
-This prints a structured summary with sections: total counts, findings by file, findings by rule, spelling words to add, and all findings grouped by file. The summary output is already categorized, so you can proceed directly to fixing.
+Vale prints each finding as `file:line:col: severity rule message`. Review all findings and proceed to fixing.
 
 If both linters return zero findings, report success and stop.
 
