@@ -29,12 +29,7 @@ jobs:
         uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41 # v7.2.1
 
       - name: Install Biome
-        run: |
-          tag="%40biomejs/biome%402.3.2"
-          url="https://github.com/biomejs/biome/releases/download"
-          curl -fsSL "${url}/${tag}/biome-linux-x64" -o biome
-          chmod +x biome
-          sudo mv biome /usr/local/bin/
+        run: npm install -g @biomejs/biome@2.3.2
 
       - name: Install just
         run: |
@@ -71,4 +66,6 @@ jobs:
         run: just lint
 
       - name: Lint GitHub Actions workflows
-        uses: reviewdog/action-actionlint@4b9ef3f43a0b9162e3c83c1a08d1cc8d4235164b # v1.70.0
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          ./actionlint -color
